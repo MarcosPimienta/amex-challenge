@@ -145,4 +145,8 @@ export const initializeCache = (serializedCache: string): void => {
   }
 };
 
-export const wipeCache = (): void => {};
+// Function to wipe/clear the cache
+export const wipeCache = (): void => {
+  // Reset the cache to an empty object
+  cache = {};
+};
