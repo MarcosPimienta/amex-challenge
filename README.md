@@ -84,3 +84,57 @@ This will:
 ├── package-lock.json            # Exact versions of dependencies
 └── README.md                    # 📖 You are here
 ```
+
+### 🧠 Implementation Notes
+
+This project required implementing a caching layer and supporting functionality to enable both client-side and server-side data fetching with proper reuse across renders. Below is a summary of the key functions and their roles:
+
+## 🔁 ```useCachingFetch(url)```:
+A custom React hook that fetches data from a given URL with caching.
+It returns:
+
+* ```isLoading```: boolean indicating the fetch status
+* ```data```: fetched data or null
+* ```error```: fetch error if any, or null
+
+### 🔑 Key Behavior:
+
+* Caches the response in a shared object to prevent duplicate requests.
+* If data is already cached for a URL, it returns immediately without making a network request.
+* Helps ensure that only one network request is made, even if the hook is called multiple times with the same URL.
+
+## ⏳ ```preloadCachingFetch(url)```:
+A function designed to be used only on the server during SSR.
+
+### 🚀 Purpose:
+
+* Fetches and caches data before rendering begins.
+* Ensures that when useCachingFetch runs on the client, the data is already available.
+* Enables full SSR hydration with no loading states or redundant fetches.
+
+## 💾 ```serializeCache()```:
+Converts the in-memory cache object into a JSON string.
+
+### 🖧 Used on the Server:
+* Injects the serialized cache into the HTML so it can be transferred to the browser during SSR.
+
+## 📥 ```initializeCache(serializedCache)```:
+Takes the serialized JSON string from the server and rehydrates the cache on the client.
+
+### 💻 Used on the Client:
+* Makes the preloaded SSR data available to useCachingFetch on first render, preventing network requests.
+
+## 🗑️ ```wipeCache()```:
+Clears the in-memory cache.
+
+### 🚀 Purpose:
+
+* Helpful for tests or scenarios where a fresh fetch is required.
+* Prevents stale data reuse across navigations or sessions.
+
+## ✅ Results
+With this system in place:
+
+* Visiting /appWithoutSSRData shows data with one network request.
+* Visiting /appWithSSRData shows data immediately (even with JavaScript disabled).
+* Repeated use of the same data in multiple components doesn't cause repeated fetches.
