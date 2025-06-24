@@ -90,11 +90,24 @@ export const useCachingFetch: UseCachingFetch = (url: string) => {
  * 3. This file passes a type-check.
  *
  */
+
+// Function to preload the data on the server
 export const preloadCachingFetch = async (url: string): Promise<void> => {
-  throw new Error(
-    'preloadCachingFetch has not been implemented, please read the instructions in DevTask.md',
-  );
+  // Perform the fetch request to get the data
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error('Failed to fetch data during preloading');
+    }
+    const fetchedData = await response.json();
+
+    // Store the fetched data in the cache with the current timestamp
+    cache[url] = { data: fetchedData, timestamp: Date.now() };
+  } catch (err) {
+    console.error('Error preloading data:', err);
+  }
 };
+
 
 /**
  * 3.1 Implement a serializeCache function that serializes the cache to a string.
