@@ -1,0 +1,43 @@
+# Node modules
+node_modules/
+
+# Build output
+dist/
+
+# IDE configs
+.vscode/
+.idea/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment files
+.env
+.env.*.local
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Optional: Jest / test coverage
+coverage/
+
+# Optional: Editor history or workspace settings
+*.swp
+*.swo
+*.code-workspace
+
+# Mock Service Worker cache
+mockServiceWorker.js
+mockServer/mockServiceWorker.js
+
+# Optional: Custom debug or temp files
+debug.log
+temp/
+*.tmp
