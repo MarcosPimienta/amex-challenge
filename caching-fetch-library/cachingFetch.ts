@@ -132,6 +132,17 @@ export const serializeCache = (): string => {
   return JSON.stringify(cache);
 };
 
-export const initializeCache = (serializedCache: string): void => {};
+// 3.2 Initialize the cache from a serialized string
+export const initializeCache = (serializedCache: string): void => {
+  try {
+    // Parse the JSON string back into the cache object
+    const parsedCache = JSON.parse(serializedCache);
+
+    // Replace the existing cache with the parsed cache
+    cache = parsedCache;
+  } catch (err) {
+    console.error('Failed to initialize cache:', err);
+  }
+};
 
 export const wipeCache = (): void => {};
