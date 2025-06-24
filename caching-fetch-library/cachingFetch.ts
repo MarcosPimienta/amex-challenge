@@ -2,11 +2,21 @@
 // and/or add new dependencies to the project as you see fit.
 // However, you must not change the surface API presented from this file,
 // and you should not need to change any other files in the project to complete the challenge
+import { useState, useEffect } from 'react';
 
 type UseCachingFetch = (url: string) => {
   isLoading: boolean;
   data: unknown;
   error: Error | null;
+};
+
+// Cache object (to store the fetched data)
+let cache: Record<string, { data: unknown; timestamp: number }> = {};
+
+// Function to determine if the cache has expired (5 minutes for example)
+const isCacheExpired = (timestamp: number): boolean => {
+  const expirationTime = 5 * 60 * 1000; // 5 minutes
+  return Date.now() - timestamp > expirationTime;
 };
 
 /**
@@ -27,14 +37,43 @@ type UseCachingFetch = (url: string) => {
  * 4. This file passes a type-check.
  *
  */
-export const useCachingFetch: UseCachingFetch = (url) => {
-  return {
-    data: null,
-    isLoading: false,
-    error: new Error(
-      'UseCachingFetch has not been implemented, please read the instructions in DevTask.md',
-    ),
-  };
+export const useCachingFetch: UseCachingFetch = (url: string) => {
+  // State variables for loading, data, and error
+  const [isLoading, setIsLoading] = useState(false);
+  const [data, setData] = useState<unknown>(null);
+  const [error, setError] = useState<Error | null>(null);
+
+  // Check if the data is already in the cache
+  useEffect(() => {
+    if (cache[url] && !isCacheExpired(cache[url].timestamp)) {
+      // If cache exists and is valid, use the cached data
+      setData(cache[url].data);
+      return;
+    }
+
+    // Fetch new data if not cached or cache is expired
+    const fetchData = async () => {
+      setIsLoading(true);
+      try {
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error('Failed to fetch data');
+        }
+        const fetchedData = await response.json();
+        // Cache the new data
+        cache[url] = { data: fetchedData, timestamp: Date.now() };
+        setData(fetchedData);
+      } catch (err) {
+        setError(err as Error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [url]); // Re-run when URL changes
+
+  return { isLoading, data, error };
 };
 
 /**
