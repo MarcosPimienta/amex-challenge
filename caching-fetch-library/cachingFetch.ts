@@ -125,7 +125,12 @@ export const preloadCachingFetch = async (url: string): Promise<void> => {
  * 4. This file passes a type-check.
  *
  */
-export const serializeCache = (): string => '';
+
+// 3.1 Serialize the cache to a string
+export const serializeCache = (): string => {
+  // Convert the cache object to a JSON string
+  return JSON.stringify(cache);
+};
 
 export const initializeCache = (serializedCache: string): void => {};
 
